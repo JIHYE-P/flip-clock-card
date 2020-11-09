@@ -8,3 +8,33 @@ html, body {
 body {
   background: url('./images/bg.png') repeat center;
 }
+.flip {
+  position: relative;
+}
+.front-top,
+.front-bottom,
+.back-top,
+.back-bottom {
+  position: absolute;
+  height: 50%;
+  overflow: hidden;
+}
+.front-bottom,
+.back-bottom {
+  top: 50%;
+  .char {
+    top: -100%;
+  }
+}
+.char {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #ccc;
+  background: #111;
+}
