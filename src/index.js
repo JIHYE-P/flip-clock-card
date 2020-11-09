@@ -52,9 +52,9 @@ class FlipCard extends ElementBuilder {
   frontBottom;
   backTop;
   backBottom;
-  constructor(char, {width, height, fontSize} = {}){
+  constructor(className, char, {width, height, fontSize} = {}){
     super('div');
-    this.addClass('flip');
+    this.addClass(className);
     this.setStyle({width, height, fontSize})
 
     this.frontTop = new HalfCard('front-top', char, {width, height});
@@ -69,9 +69,9 @@ class FlipCard extends ElementBuilder {
   }
 }
 
-const flip = new FlipCard(0, {
-  width: '100px',
-  height: '150px',
+const flip = new FlipCard('flip', 0, {
+  width: '95px',
+  height: '145px',
   fontSize: '30px'
 });
 document.body.appendChild(flip.root);
