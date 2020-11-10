@@ -14,24 +14,24 @@ class ElementBuilder {
   removeClass(className){
     this.root.classList.remove(className);
   }
-  innerText(char){
+  changeChar(char){
     this.root.innerText = char;
   }
   appendTo(el){
     if(el instanceof Node) el.appendChild(this.root)
     else if(el instanceof ElementBuilder) el.root.appendChild(this.root)
   }
+  forceReflow(){
+    this.root.offsetHeight;
+  }
 }
 
 class CharCard extends ElementBuilder {
   constructor(className, char, {width, height} = {}){
     super('div');
-    this.innerText(char)
+    this.changeChar(char)
     this.addClass(className);
     this.setStyle({width, height});
-  }
-  changeText(char){
-    super.innerText(char)
   }
 }
 
@@ -45,9 +45,28 @@ class HalfCard extends ElementBuilder {
     this.charCard = new CharCard('char', char, {width, height});
     this.charCard.appendTo(this);
   }
+  changeChar(char){
+    this.charCard.changeChar(char);
+  }
 }
 
-class FlipCard extends ElementBuilder {
+class FlipAnimate extends ElementBuilder {
+  constructor(){
+    super('div');
+  }
+  flipAction(className, timeout){
+    return new Promise(res => {
+      this.forceReflow();
+      if(!this.root.classList.contains(className)) this.addClass(className);
+      setTimeout(() => {
+        this.removeClass(className);
+        res();
+      }, timeout);
+    });
+  }
+}
+
+class FlipCard extends FlipAnimate {
   frontTop;
   frontBottom;
   backTop;
@@ -67,11 +86,27 @@ class FlipCard extends ElementBuilder {
     this.backTop.appendTo(this);
     this.backBottom.appendTo(this);
   }
+  frontChange(char){
+    this.frontTop.changeChar(char);
+    this.frontBottom.changeChar(char);
+  }
+  backChange(char){
+    this.backTop.changeChar(char);
+    this.backBottom.changeChar(char);
+  }
+  async flipChange(char){
+    this.backChange('1');
+    await this.flipAction('active', 500);
+    this.frontChange('0');
+  }
 }
 
 const flip = new FlipCard('flip', 0, {
-  width: '95px',
-  height: '145px',
-  fontSize: '30px'
+  width: '85px',
+  height: '115px',
+  fontSize: '80px'
 });
 document.body.appendChild(flip.root);
+// setInterval(() => flip.flipChange(), 1000);
+
+

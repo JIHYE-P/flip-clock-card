@@ -5,9 +5,9 @@ html, body {
   width: 100%;
   height: 100%;
 }
-body {
-  background: url('./images/bg.png') repeat center;
-}
+// body {
+//   background: url('./images/bg.png') repeat center;
+// }
 .flip {
   position: relative;
 }
@@ -18,10 +18,12 @@ body {
   position: absolute;
   height: 50%;
   overflow: hidden;
+  
 }
 .front-bottom,
 .back-bottom {
   top: 50%;
+  z-index: 2;
   .char {
     top: -100%;
   }
@@ -37,4 +39,25 @@ body {
   align-items: center;
   color: #ccc;
   background: #222;
+}
+
+.front-top {
+  transform: perspective(140px) rotateX(0);
+  transform-origin: bottom;
+  transition: transform 0.5s linear;
+  backface-visibility: hidden;
+  z-index: 3;
+}
+.back-bottom {
+  transform: perspective(140px) rotateX(180deg);
+  transform-origin: top;
+  transition: transform 0.5s linear;
+  backface-visibility: hidden;
+  z-index: 3;
+}
+.active .front-top {
+  transform: perspective(140px) rotateX(-180deg);
+}
+.active .back-bottom {
+  transform: perspective(140px) rotateX(0);
 }
