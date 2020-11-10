@@ -1,36 +1,52 @@
 @import url('./reset.scss');
+@import url('https://fonts.googleapis.com/css2?family=Goldman:wght@700&display=swap');
 
 html, body {
   position: relative;
   width: 100%;
   height: 100%;
 }
-// body {
-//   background: url('./images/bg.png') repeat center;
-// }
-.flip {
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f8f8f8;
+}
+.inner {
   position: relative;
-}
-.front-top,
-.front-bottom,
-.back-top,
-.back-bottom {
-  position: absolute;
-  height: 50%;
-  overflow: hidden;
-  
-}
-.front-bottom,
-.back-bottom {
-  top: 50%;
-  z-index: 2;
-  .char {
-    top: -100%;
+  margin-left: 40px;
+  &::before, &::after {
+    content: '';
+    display: block;
+    width: 8px;
+    height: 8px;
+    background: #222;
+    border-radius: 50%;
+    position: absolute;
+    left: -25px;
   }
+  &::before {
+    top: 30px;
+  }
+  &::after {
+    bottom: 30px;
+  }
+}
+.hours {
+  margin-left: 0;
+  &::before, &::after {
+    display: none;
+  }
+}
+
+.flip {
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  margin: 5px;
 }
 .char {
   width: 100%;
-  height: 100%;
   position: absolute;
   left: 0;
   top: 0;
@@ -38,26 +54,49 @@ html, body {
   justify-content: center;
   align-items: center;
   color: #ccc;
+  font-family: 'Goldman', cursive;
   background: #222;
 }
-
+.half {
+  position: absolute;
+  left: 0;
+  height: 50%;
+  overflow: hidden;
+  border-radius: 6px 6px 0 0;
+}
+.front-bottom,
+.back-bottom {
+  top: 50%;
+  border-radius: 0 0 6px 6px;
+  .char {
+    top: -100%;
+  }
+}
 .front-top {
-  transform: perspective(140px) rotateX(0);
+  transform: perspective(90px) rotateX(0);
   transform-origin: bottom;
-  transition: transform 0.5s linear;
   backface-visibility: hidden;
-  z-index: 3;
+  z-index: 2;
 }
 .back-bottom {
-  transform: perspective(140px) rotateX(180deg);
+  transform: perspective(90px) rotateX(180deg);
   transform-origin: top;
-  transition: transform 0.5s linear;
   backface-visibility: hidden;
   z-index: 3;
 }
+.back-top {
+  transform: perspective(90px) rotateX(0deg);
+  z-index: 1;
+}
+.front-bottom {
+  transform: perspective(90px) rotateX(0deg);
+  z-index: 2;
+}
 .active .front-top {
-  transform: perspective(140px) rotateX(-180deg);
+  transform: perspective(90px) rotateX(-180deg);
+  transition: transform 0.5s linear;
 }
 .active .back-bottom {
-  transform: perspective(140px) rotateX(0);
+  transform: perspective(90px) rotateX(0);
+  transition: transform 0.5s linear;
 }

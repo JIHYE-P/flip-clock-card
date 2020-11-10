@@ -8,18 +8,18 @@ class ElementBuilder {
   setStyle(style){
     Object.assign(this.root.style, style);
   }
-  addClass(className){
-    this.root.classList.add(className);
+  addClass(...className){
+    this.root.classList.add(...className);
   }
-  removeClass(className){
-    this.root.classList.remove(className);
+  removeClass(...className){
+    this.root.classList.remove(...className);
   }
   changeChar(char){
     this.root.innerText = char;
   }
   appendTo(el){
-    if(el instanceof Node) el.appendChild(this.root)
-    else if(el instanceof ElementBuilder) el.root.appendChild(this.root)
+    if(el instanceof Node) el.appendChild(this.root);
+    else if(el instanceof ElementBuilder) el.root.appendChild(this.root);
   }
   forceReflow(){
     this.root.offsetHeight;
@@ -40,7 +40,7 @@ class HalfCard extends ElementBuilder {
   constructor(className, char, {width, height} = {}){
     super('div');
     this.setStyle({width});
-    this.addClass(className);
+    this.addClass('half', className);
     
     this.charCard = new CharCard('char', char, {width, height});
     this.charCard.appendTo(this);
@@ -71,6 +71,7 @@ class FlipCard extends FlipAnimate {
   frontBottom;
   backTop;
   backBottom;
+  char;
   constructor(className, char, {width, height, fontSize} = {}){
     super('div');
     this.addClass(className);
@@ -85,6 +86,8 @@ class FlipCard extends FlipAnimate {
     this.frontBottom.appendTo(this);
     this.backTop.appendTo(this);
     this.backBottom.appendTo(this);
+
+    this.char = char;
   }
   frontChange(char){
     this.frontTop.changeChar(char);
@@ -94,19 +97,54 @@ class FlipCard extends FlipAnimate {
     this.backTop.changeChar(char);
     this.backBottom.changeChar(char);
   }
-  async flipChange(char){
-    this.backChange('1');
+  async changeChar(char){
+    if(this.char === char) return;
+    this.char = char.slice(0, 1);
+    this.backChange(char);
     await this.flipAction('active', 500);
-    this.frontChange('0');
+    this.frontChange(char);
   }
 }
 
-const flip = new FlipCard('flip', 0, {
-  width: '85px',
-  height: '115px',
-  fontSize: '80px'
-});
-document.body.appendChild(flip.root);
-// setInterval(() => flip.flipChange(), 1000);
+class FlipList extends Set {
+  constructor(length, char, className, {width, height, fontSize}){
+    super(Array.from({length}, () => char).map(char => new FlipCard(className, char, {width, height, fontSize})));
+  }
+  appendTo(parent){
+    this.forEach(el => el.appendTo(parent));
+  }
+  changeChar(char){
+    [...this].forEach((el, i) => el.changeChar(char[i]));
+  }
+}
+
+const cardSize = {width: '65px', height: '90px', fontSize: '70px'}
+const hoursCard = new FlipList(2, 0, 'flip', cardSize);
+const minutesCard = new FlipList(2, 0, 'flip', cardSize);
+const secondsCard = new FlipList(2, 0, 'flip', cardSize);
+
+const hoursInner = new ElementBuilder('div', {className: 'inner hours'});
+const minutesInner = new ElementBuilder('div', {className: 'inner minutes'});
+const secondsInner = new ElementBuilder('div', {className: 'inner seconds'});
+
+hoursCard.appendTo(hoursInner);
+minutesCard.appendTo(minutesInner);
+secondsCard.appendTo(secondsInner);
+
+hoursInner.appendTo(document.body);
+minutesInner.appendTo(document.body);
+secondsInner.appendTo(document.body);
+
+setInterval(() => {
+  const now = new Date();
+  const hours = String(now.getHours()).padStart(2,'0').split(''); 
+  const minutes = String(now.getMinutes()).padStart(2,'0').split('');
+  const seconds = String(now.getSeconds()).padStart(2,'0').split('');
+
+  hoursCard.changeChar(hours);
+  minutesCard.changeChar(minutes);
+  secondsCard.changeChar(seconds);
+}, 1000);
+
 
 
