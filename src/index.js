@@ -1,5 +1,5 @@
 import './index.scss';
-
+console.log('test')
 class ElementBuilder {
   root;
   constructor(tagName, props = {}){
